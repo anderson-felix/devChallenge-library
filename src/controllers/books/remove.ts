@@ -5,7 +5,11 @@ import { bookModel } from "../../models/bookModel";
 export const remove = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  await bookModel.findByIdAndDelete(id);
+  const book = await bookModel.findOne({ id });
 
-  return res.status(200).json({ message: "Book deleted" });
+  if (!book) return res.status(404).json({ error: `Book ${id} not found` });
+
+  await bookModel.deleteOne({ id: book.id });
+
+  return res.status(200).json({ message: `Book ${id} deleted successfully` });
 };
